@@ -1,0 +1,178 @@
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #121212;
+  color: #e0e0e0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+}
+
+h1, h2, h3 {
+  margin-bottom: 0.5rem;
+}
+
+#app {
+  max-width: 400px;
+  width: 100%;
+  background: #1e1e1e;
+  border-radius: 10px;
+  padding: 1.5rem;
+  box-shadow: 0 0 15px #333;
+}
+
+header p {
+  font-style: italic;
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+}
+
+.view {
+  display: none;
+}
+
+.view.active {
+  display: block;
+}
+
+button {
+  cursor: pointer;
+  background-color: #2a72d9;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 0.6rem 1.2rem;
+  margin: 0.5rem 0.2rem;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+button:hover:not(:disabled) {
+  background-color: #4a9df9;
+}
+
+button:disabled {
+  background-color: #555;
+  cursor: default;
+}
+
+#phaseDisplay {
+  font-size: 1.4rem;
+  margin-bottom: 0.3rem;
+  text-align: center;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+#timeDisplay {
+  font-size: 3rem;
+  text-align: center;
+  margin-bottom: 1rem;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+#controls {
+  text-align: center;
+}
+
+label {
+  display: block;
+  margin: 0.8rem 0 0.3rem;
+}
+
+input[type=number] {
+  width: 100%;
+  padding: 0.4rem;
+  font-size: 1rem;
+  border-radius: 5px;
+  border: none;
+  margin-bottom: 1rem;
+  background-color: #2a2a2a;
+  color: #ddd;
+}
+
+.settingsButtons {
+  display: flex;
+  justify-content: space-between;
+}
+
+#sessionCountDisplay {
+  margin-top: 1rem;
+  font-weight: 600;
+  font-size: 1rem;
+  text-align: center;
+}
+
+#logPanel {
+  margin-top: 1.5rem;
+  background-color: #292929;
+  padding: 1rem;
+  border-radius: 7px;
+  max-height: 150px;
+  overflow-y: auto;
+  font-size: 0.85rem;
+  color: #bbb;
+}
+
+#logPanel h3 {
+  margin-bottom: 0.5rem;
+  color: #ccc;
+}
+
+#logList {
+  list-style-type: none;
+  max-height: 130px;
+  overflow-y: auto;
+}
+
+#logList li {
+  margin-bottom: 0.3rem;
+  border-bottom: 1px solid #444;
+  padding-bottom: 0.2rem;
+}
+
+/* Modal styles */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(30, 30, 30, 0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal.hidden {
+  display: none;
+}
+
+.modal-content {
+  background-color: #222;
+  padding: 1.5rem;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 320px;
+  text-align: center;
+  color: #eee;
+}
+
+.modal-buttons {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: space-around;
+}
+
+.modal-buttons button {
+  width: 100px;
+}
