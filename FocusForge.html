@@ -1,0 +1,699 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2575.4">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  </style>
+</head>
+<body>
+<p class="p1">&lt;!DOCTYPE html&gt;</p>
+<p class="p1">&lt;html lang="en"&gt;</p>
+<p class="p1">&lt;head&gt;</p>
+<p class="p1">&lt;meta charset="UTF-8" /&gt;</p>
+<p class="p1">&lt;meta name="viewport" content="width=device-width, initial-scale=1" /&gt;</p>
+<p class="p1">&lt;title&gt;FocusForge Pomodoro Timer&lt;/title&gt;</p>
+<p class="p1">&lt;style&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>/* --- Base Styles --- */</p>
+<p class="p1"><span class="Apple-converted-space">  </span>body {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>background: #121212;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>color: #e0e0e0;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>margin: 0; padding: 0;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>display: flex;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>flex-direction: column;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>align-items: center;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>height: 100vh;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>justify-content: center;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>user-select: none;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>h1 {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>margin-bottom: 0.3em;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>font-weight: 700;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>#menu, #timer-section, #status, #settings-section, #modal {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>background: #222;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>border-radius: 8px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>padding: 20px 30px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>margin: 10px 0;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>width: 350px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>box-shadow: 0 0 10px #0f7c7c88;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>button {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>background: #0f7c7c;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>border: none;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>border-radius: 6px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>color: white;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>font-weight: 600;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>padding: 10px 20px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>margin: 6px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>cursor: pointer;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>transition: background 0.3s ease;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>button:hover:not(:disabled) {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>background: #139e9e;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>button:disabled {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>background: #555;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>cursor: default;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>#timer {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>font-size: 3em;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>font-weight: 700;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>text-align: center;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>margin: 10px 0;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>letter-spacing: 4px;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>#phase-name {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>text-align: center;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>font-size: 1.4em;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>font-weight: 600;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>margin-bottom: 10px;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>#session-info, #settings-section label {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>font-size: 1.1em;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>margin-top: 5px;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>#log {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>font-size: 0.85em;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>max-height: 140px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>overflow-y: auto;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>background: #333;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>padding: 10px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>border-radius: 5px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>margin-top: 12px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>font-family: monospace;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>white-space: pre-wrap;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>input[type="number"] {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>width: 60px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>border-radius: 5px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>border: none;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>padding: 5px 8px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>margin-left: 10px;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>label {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>display: flex;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>align-items: center;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>margin-bottom: 10px;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>#settings-section {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>display: none;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>#modal {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>display: none;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>position: fixed;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>background: rgba(0,0,0,0.7);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>top: 0; left: 0; right: 0; bottom: 0;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>justify-content: center;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>align-items: center;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>z-index: 10;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>#modal-content {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>background: #222;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>padding: 25px 35px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>border-radius: 10px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>text-align: center;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>max-width: 400px;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>#modal-content button {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>margin: 12px 10px 0 10px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>width: 100px;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>#keyboard-shortcuts {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>margin-top: 15px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>font-size: 0.9em;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>color: #bbb;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1">&lt;/style&gt;</p>
+<p class="p1">&lt;/head&gt;</p>
+<p class="p1">&lt;body&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;h1&gt;FocusForge Pomodoro&lt;/h1&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;!-- Main Menu --&gt;</p>
+<p class="p1">&lt;div id="menu" aria-label="Main menu with options"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;p&gt;&lt;strong&gt;Menu:&lt;/strong&gt; Choose an option&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;button id="start-btn" aria-label="Start a Pomodoro focus session"&gt;Start Session&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;button id="settings-btn" aria-label="Open timer settings"&gt;Settings&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;button id="reset-btn" aria-label="Reset the completed session counter"&gt;Reset Session Counter&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;button id="exit-btn" aria-label="Exit the Pomodoro timer"&gt;Exit&lt;/button&gt;</p>
+<p class="p1">&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;!-- Timer Section --&gt;</p>
+<p class="p1">&lt;div id="timer-section" aria-live="polite" aria-atomic="true" style="display:none;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div id="phase-name" role="heading" aria-level="2"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div id="timer" aria-live="assertive" aria-atomic="true"&gt;25:00&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div style="text-align:center;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;button id="pause-btn" aria-label="Pause timer"&gt;Pause&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;button id="resume-btn" aria-label="Resume timer" style="display:none;"&gt;Resume&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;button id="skip-btn" aria-label="Skip current phase"&gt;Skip&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;button id="back-menu-btn" aria-label="Return to main menu"&gt;Back to Menu&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div id="session-info" style="text-align:center;"&gt;&lt;/div&gt;</p>
+<p class="p1">&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;!-- Settings Section --&gt;</p>
+<p class="p1">&lt;div id="settings-section" aria-label="Timer settings panel"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;h2&gt;Timer Settings&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>Focus Length (minutes):</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;input type="number" id="focus-length" min="1" max="90" step="1" /&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>Short Break (minutes):</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;input type="number" id="short-break-length" min="1" max="30" step="1" /&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>Long Break (minutes):</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;input type="number" id="long-break-length" min="5" max="60" step="1" /&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>Sessions Before Long Break:</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;input type="number" id="sessions-before-long" min="1" max="10" step="1" /&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div style="text-align:center;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;button id="save-settings-btn"&gt;Save&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;button id="cancel-settings-btn"&gt;Cancel&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p1">&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;!-- Status Panel --&gt;</p>
+<p class="p1">&lt;div id="status" aria-live="polite" aria-atomic="false"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;p&gt;&lt;strong&gt;Sessions Completed Today:&lt;/strong&gt; &lt;span id="session-count"&gt;0&lt;/span&gt;&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;p&gt;&lt;strong&gt;Status Log:&lt;/strong&gt;&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div id="log" role="log" aria-live="polite" aria-atomic="false"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div id="keyboard-shortcuts"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;p&gt;&lt;strong&gt;Keyboard Shortcuts:&lt;/strong&gt;&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;ul&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;li&gt;&lt;kbd&gt;Space&lt;/kbd&gt;: Pause/Resume&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;li&gt;&lt;kbd&gt;S&lt;/kbd&gt;: Start session&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;li&gt;&lt;kbd&gt;R&lt;/kbd&gt;: Reset session count&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;li&gt;&lt;kbd&gt;Esc&lt;/kbd&gt;: Exit timer/back to menu&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;li&gt;&lt;kbd&gt;K&lt;/kbd&gt;: Skip current phase&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/ul&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p1">&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;!-- Modal Confirmation --&gt;</p>
+<p class="p1">&lt;div id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-desc"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div id="modal-content"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;h3 id="modal-title"&gt;Confirm&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;p id="modal-desc"&gt;Are you sure?&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;button id="modal-yes-btn"&gt;Yes&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;button id="modal-no-btn"&gt;No&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p1">&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>/*</p>
+<p class="p1"><span class="Apple-converted-space">   </span>* FocusForge Pomodoro Timer v2.0</p>
+<p class="p1"><span class="Apple-converted-space">   </span>* Features: Modular class, settings, persistent sessions, sound alerts, keyboard shortcuts, logs, modals.</p>
+<p class="p1"><span class="Apple-converted-space">   </span>* Author: ChatGPT</p>
+<p class="p1"><span class="Apple-converted-space">   </span>*/</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>// ----------------------------</p>
+<p class="p1"><span class="Apple-converted-space">  </span>// Utility functions</p>
+<p class="p1"><span class="Apple-converted-space">  </span>// ----------------------------</p>
+<p class="p1"><span class="Apple-converted-space">  </span>function formatTime(seconds) {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const m = Math.floor(seconds / 60);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const s = seconds % 60;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>return `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>// Play beep sound for notifications</p>
+<p class="p1"><span class="Apple-converted-space">  </span>function playBeep() {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>try {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const context = new AudioContext();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const oscillator = context.createOscillator();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>oscillator.type = 'sine';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>oscillator.frequency.setValueAtTime(440, context.currentTime); // A4 tone</p>
+<p class="p1"><span class="Apple-converted-space">      </span>oscillator.connect(context.destination);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>oscillator.start();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>oscillator.stop(context.currentTime + 0.15);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>} catch (e) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>// AudioContext may be blocked on some browsers, fail silently</p>
+<p class="p1"><span class="Apple-converted-space">      </span>log('Audio alert unavailable.');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>// Save sessions completed today with date key</p>
+<p class="p1"><span class="Apple-converted-space">  </span>function saveSessionsCompleted(count) {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const key = `focusforge_sessions_${new Date().toDateString()}`;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>localStorage.setItem(key, count);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>// Load sessions completed today</p>
+<p class="p1"><span class="Apple-converted-space">  </span>function loadSessionsCompleted() {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const key = `focusforge_sessions_${new Date().toDateString()}`;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>return parseInt(localStorage.getItem(key)) || 0;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>// ----------------------------</p>
+<p class="p1"><span class="Apple-converted-space">  </span>// Modal confirmation manager</p>
+<p class="p1"><span class="Apple-converted-space">  </span>// ----------------------------</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const modal = document.getElementById('modal');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const modalDesc = document.getElementById('modal-desc');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const modalYesBtn = document.getElementById('modal-yes-btn');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const modalNoBtn = document.getElementById('modal-no-btn');</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>let modalCallback = null;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>function showModal(message, callback) {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>modalDesc.textContent = message;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>modal.style.display = 'flex';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>modalCallback = callback;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>modalYesBtn.focus();</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>function hideModal() {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>modal.style.display = 'none';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>modalCallback = null;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>modalYesBtn.onclick = () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (modalCallback) modalCallback(true);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>hideModal();</p>
+<p class="p1"><span class="Apple-converted-space">  </span>};</p>
+<p class="p1"><span class="Apple-converted-space">  </span>modalNoBtn.onclick = () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (modalCallback) modalCallback(false);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>hideModal();</p>
+<p class="p1"><span class="Apple-converted-space">  </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>// Close modal on Escape key</p>
+<p class="p1"><span class="Apple-converted-space">  </span>window.addEventListener('keydown', e =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (e.key === 'Escape' &amp;&amp; modal.style.display === 'flex') {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>hideModal();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>// ----------------------------</p>
+<p class="p1"><span class="Apple-converted-space">  </span>// Main Timer Class</p>
+<p class="p1"><span class="Apple-converted-space">  </span>// ----------------------------</p>
+<p class="p1"><span class="Apple-converted-space">  </span>class PomodoroTimer {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>constructor(settings, onUpdate, onPhaseChange, onComplete) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this.settings = settings;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this.onUpdate = onUpdate; <span class="Apple-converted-space">        </span>// Called every second with remaining time &amp; phase</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this.onPhaseChange = onPhaseChange; // Called when phase changes</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this.onComplete = onComplete; <span class="Apple-converted-space">    </span>// Called when entire timer sequence exits</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this.sessionsCompleted = loadSessionsCompleted();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this.currentPhase = 'idle'; <span class="Apple-converted-space">      </span>// 'focus', 'shortBreak', 'longBreak', 'idle'</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this.remainingTime = 0;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this.timerId = null;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this.isPaused = true;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this._phaseCounter = 0;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>start() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (this.currentPhase === 'idle' || this.currentPhase === 'longBreak' || this.currentPhase === 'shortBreak') {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>this._startPhase('focus');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>} else if (this.isPaused) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>this.resume();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>_startPhase(phase) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this.currentPhase = phase;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>switch(phase) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>case 'focus':</p>
+<p class="p1"><span class="Apple-converted-space">          </span>this.remainingTime = this.settings.focusLength * 60;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>this._phaseCounter++;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>break;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>case 'shortBreak':</p>
+<p class="p1"><span class="Apple-converted-space">          </span>this.remainingTime = this.settings.shortBreakLength * 60;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>break;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>case 'longBreak':</p>
+<p class="p1"><span class="Apple-converted-space">          </span>this.remainingTime = this.settings.longBreakLength * 60;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>break;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this.isPaused = false;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this._tick();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this.timerId = setInterval(() =&gt; this._tick(), 1000);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this.onPhaseChange(this.currentPhase);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>_tick() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (!this.isPaused) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (this.remainingTime &gt; 0) {</p>
+<p class="p1"><span class="Apple-converted-space">          </span>this.remainingTime--;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>this.onUpdate(this.remainingTime, this.currentPhase);</p>
+<p class="p1"><span class="Apple-converted-space">          </span>if (this.remainingTime === 0) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>this._onPhaseEnd();</p>
+<p class="p1"><span class="Apple-converted-space">          </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>pause() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this.isPaused = true;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>resume() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (this.currentPhase === 'idle') return;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this.isPaused = false;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>skip() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (this.currentPhase === 'idle') return;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this.remainingTime = 0;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this._onPhaseEnd();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>reset() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>clearInterval(this.timerId);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this.timerId = null;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this.isPaused = true;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this.currentPhase = 'idle';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this.remainingTime = 0;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this._phaseCounter = 0;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this.onUpdate(0, 'idle');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this.onPhaseChange('idle');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this.onComplete();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>_onPhaseEnd() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>clearInterval(this.timerId);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this.timerId = null;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>playBeep();</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (this.currentPhase === 'focus') {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>this.sessionsCompleted++;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>saveSessionsCompleted(this.sessionsCompleted);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (this._phaseCounter % this.settings.sessionsBeforeLong === 0) {</p>
+<p class="p1"><span class="Apple-converted-space">          </span>this._startPhase('longBreak');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">          </span>this._startPhase('shortBreak');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">      </span>} else if (this.currentPhase === 'shortBreak') {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>this._startPhase('focus');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>} else if (this.currentPhase === 'longBreak') {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>this._startPhase('focus');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>// ----------------------------</p>
+<p class="p1"><span class="Apple-converted-space">  </span>// Settings management</p>
+<p class="p1"><span class="Apple-converted-space">  </span>// ----------------------------</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const defaultSettings = {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>focusLength: 25,</p>
+<p class="p1"><span class="Apple-converted-space">    </span>shortBreakLength: 5,</p>
+<p class="p1"><span class="Apple-converted-space">    </span>longBreakLength: 15,</p>
+<p class="p1"><span class="Apple-converted-space">    </span>sessionsBeforeLong: 4</p>
+<p class="p1"><span class="Apple-converted-space">  </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>// Save settings to localStorage</p>
+<p class="p1"><span class="Apple-converted-space">  </span>function saveSettings(settings) {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>localStorage.setItem('focusforge_settings', JSON.stringify(settings));</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>// Load settings or default</p>
+<p class="p1"><span class="Apple-converted-space">  </span>function loadSettings() {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>try {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const s = localStorage.getItem('focusforge_settings');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>return s ? JSON.parse(s) : {...defaultSettings};</p>
+<p class="p1"><span class="Apple-converted-space">    </span>} catch {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>return {...defaultSettings};</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>// ----------------------------</p>
+<p class="p1"><span class="Apple-converted-space">  </span>// Main app logic</p>
+<p class="p1"><span class="Apple-converted-space">  </span>// ----------------------------</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const menuDiv = document.getElementById('menu');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const timerSection = document.getElementById('timer-section');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const phaseName = document.getElementById('phase-name');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const timerDisplay = document.getElementById('timer');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const sessionCountDisplay = document.getElementById('session-count');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const sessionInfo = document.getElementById('session-info');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const logDiv = document.getElementById('log');</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>const startBtn = document.getElementById('start-btn');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const resetBtn = document.getElementById('reset-btn');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const exitBtn = document.getElementById('exit-btn');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const pauseBtn = document.getElementById('pause-btn');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const resumeBtn = document.getElementById('resume-btn');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const skipBtn = document.getElementById('skip-btn');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const backMenuBtn = document.getElementById('back-menu-btn');</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>const settingsSection = document.getElementById('settings-section');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const settingsBtn = document.getElementById('settings-btn');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const saveSettingsBtn = document.getElementById('save-settings-btn');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const cancelSettingsBtn = document.getElementById('cancel-settings-btn');</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>// Settings input fields</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const focusLengthInput = document.getElementById('focus-length');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const shortBreakInput = document.getElementById('short-break-length');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const longBreakInput = document.getElementById('long-break-length');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const sessionsBeforeLongInput = document.getElementById('sessions-before-long');</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>let settings = loadSettings();</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>// Initialize input fields with settings values</p>
+<p class="p1"><span class="Apple-converted-space">  </span>function populateSettingsInputs() {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>focusLengthInput.value = settings.focusLength;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>shortBreakInput.value = settings.shortBreakLength;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>longBreakInput.value = settings.longBreakLength;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>sessionsBeforeLongInput.value = settings.sessionsBeforeLong;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>populateSettingsInputs();</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>// Log messages helper</p>
+<p class="p1"><span class="Apple-converted-space">  </span>function log(message) {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const now = new Date().toLocaleTimeString();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>logDiv.textContent = `${now} - ${message}\n` + logDiv.textContent;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>// Update sessions completed display</p>
+<p class="p1"><span class="Apple-converted-space">  </span>function updateSessionCount(count) {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>sessionCountDisplay.textContent = count;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>// Update timer UI on tick</p>
+<p class="p1"><span class="Apple-converted-space">  </span>function onTimerUpdate(secondsLeft, phase) {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>timerDisplay.textContent = formatTime(secondsLeft);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>sessionInfo.textContent = `Phase: ${phase.charAt(0).toUpperCase() + phase.slice(1)}`;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>// Update UI on phase change</p>
+<p class="p1"><span class="Apple-converted-space">  </span>function onPhaseChange(phase) {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>phaseName.textContent = {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>focus: 'Focus Session',</p>
+<p class="p1"><span class="Apple-converted-space">      </span>shortBreak: 'Short Break',</p>
+<p class="p1"><span class="Apple-converted-space">      </span>longBreak: 'Long Break',</p>
+<p class="p1"><span class="Apple-converted-space">      </span>idle: 'Timer Idle'</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}[phase] || 'Timer';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (phase === 'idle') {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>sessionInfo.textContent = '';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>timerDisplay.textContent = formatTime(settings.focusLength * 60);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>// On complete resets</p>
+<p class="p1"><span class="Apple-converted-space">  </span>function onComplete() {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>updateSessionCount(timer.sessionsCompleted);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>log(`Completed sessions today: ${timer.sessionsCompleted}`);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>// Create timer instance</p>
+<p class="p1"><span class="Apple-converted-space">  </span>let timer = new PomodoroTimer(settings, onTimerUpdate, onPhaseChange, onComplete);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>// Show main menu</p>
+<p class="p1"><span class="Apple-converted-space">  </span>function showMenu() {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>menuDiv.style.display = 'block';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>timerSection.style.display = 'none';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>settingsSection.style.display = 'none';</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>// Show timer UI</p>
+<p class="p1"><span class="Apple-converted-space">  </span>function showTimerUI() {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>menuDiv.style.display = 'none';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>timerSection.style.display = 'block';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>settingsSection.style.display = 'none';</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>// Show settings panel</p>
+<p class="p1"><span class="Apple-converted-space">  </span>function showSettingsUI() {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>menuDiv.style.display = 'none';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>timerSection.style.display = 'none';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>settingsSection.style.display = 'block';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>populateSettingsInputs();</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>// Start a new session</p>
+<p class="p1"><span class="Apple-converted-space">  </span>function startSession() {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>showTimerUI();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>timer.start();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>log('Session started');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>updateSessionCount(timer.sessionsCompleted);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>pauseBtn.style.display = 'inline-block';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>resumeBtn.style.display = 'none';</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>// Reset completed sessions count with confirmation modal</p>
+<p class="p1"><span class="Apple-converted-space">  </span>function resetSessions() {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>showModal('Reset all completed sessions today? This cannot be undone.', (confirmed) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (confirmed) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>timer.sessionsCompleted = 0;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>saveSessionsCompleted(0);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>updateSessionCount(0);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>log('Session counter reset by user');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>});</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>// Exit the app (simulate exit by resetting timer &amp; showing menu)</p>
+<p class="p1"><span class="Apple-converted-space">  </span>function exitApp() {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (timer.currentPhase !== 'idle') {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>showModal('Exit timer and return to menu? Current session will stop.', (confirmed) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (confirmed) {</p>
+<p class="p1"><span class="Apple-converted-space">          </span>timer.reset();</p>
+<p class="p1"><span class="Apple-converted-space">          </span>showMenu();</p>
+<p class="p1"><span class="Apple-converted-space">          </span>log('Timer exited');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">      </span>});</p>
+<p class="p1"><span class="Apple-converted-space">    </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>showMenu();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>// Pause timer</p>
+<p class="p1"><span class="Apple-converted-space">  </span>function pauseTimer() {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>timer.pause();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>pauseBtn.style.display = 'none';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>resumeBtn.style.display = 'inline-block';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>log('Timer paused');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>// Resume timer</p>
+<p class="p1"><span class="Apple-converted-space">  </span>function resumeTimer() {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>timer.resume();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>resumeBtn.style.display = 'none';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>pauseBtn.style.display = 'inline-block';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>log('Timer resumed');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>// Skip current phase</p>
+<p class="p1"><span class="Apple-converted-space">  </span>function skipPhase() {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (timer.currentPhase !== 'idle') {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>showModal('Skip current phase?', (confirmed) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (confirmed) {</p>
+<p class="p1"><span class="Apple-converted-space">          </span>timer.skip();</p>
+<p class="p1"><span class="Apple-converted-space">          </span>log('Phase skipped');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">      </span>});</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>// Save settings button</p>
+<p class="p1"><span class="Apple-converted-space">  </span>saveSettingsBtn.onclick = () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const f = parseInt(focusLengthInput.value);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const sb = parseInt(shortBreakInput.value);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const lb = parseInt(longBreakInput.value);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const sl = parseInt(sessionsBeforeLongInput.value);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (isNaN(f) || f &lt; 1 || f &gt; 90) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>alert('Focus length must be between 1 and 90 minutes.');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>return;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (isNaN(sb) || sb &lt; 1 || sb &gt; 30) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>alert('Short break must be between 1 and 30 minutes.');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>return;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (isNaN(lb) || lb &lt; 5 || lb &gt; 60) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>alert('Long break must be between 5 and 60 minutes.');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>return;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (isNaN(sl) || sl &lt; 1 || sl &gt; 10) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>alert('Sessions before long break must be between 1 and 10.');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>return;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>settings = { focusLength: f, shortBreakLength: sb, longBreakLength: lb, sessionsBeforeLong: sl };</p>
+<p class="p1"><span class="Apple-converted-space">    </span>saveSettings(settings);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>log('Settings updated');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>timer.reset();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>timer = new PomodoroTimer(settings, onTimerUpdate, onPhaseChange, onComplete);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>showMenu();</p>
+<p class="p1"><span class="Apple-converted-space">  </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>cancelSettingsBtn.onclick = () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>showMenu();</p>
+<p class="p1"><span class="Apple-converted-space">  </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>// Attach button listeners</p>
+<p class="p1"><span class="Apple-converted-space">  </span>startBtn.onclick = startSession;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>resetBtn.onclick = resetSessions;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>exitBtn.onclick = exitApp;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>pauseBtn.onclick = pauseTimer;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>resumeBtn.onclick = resumeTimer;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>skipBtn.onclick = skipPhase;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>backMenuBtn.onclick = () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (timer.currentPhase !== 'idle') {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>showModal('Return to menu? Current session will stop.', (confirmed) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (confirmed) {</p>
+<p class="p1"><span class="Apple-converted-space">          </span>timer.reset();</p>
+<p class="p1"><span class="Apple-converted-space">          </span>showMenu();</p>
+<p class="p1"><span class="Apple-converted-space">          </span>log('Returned to menu from timer');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">      </span>});</p>
+<p class="p1"><span class="Apple-converted-space">    </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>showMenu();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>};</p>
+<p class="p1"><span class="Apple-converted-space">  </span>settingsBtn.onclick = showSettingsUI;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>// Keyboard shortcuts</p>
+<p class="p1"><span class="Apple-converted-space">  </span>window.addEventListener('keydown', (e) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (modal.style.display === 'flex') return; // ignore shortcuts while modal open</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>switch(e.key.toLowerCase()) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>case ' ':</p>
+<p class="p1"><span class="Apple-converted-space">        </span>e.preventDefault();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (timer.currentPhase === 'idle') break;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (timer.isPaused) resumeTimer();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>else pauseTimer();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>break;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>case 's':</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (menuDiv.style.display === 'block') {</p>
+<p class="p1"><span class="Apple-converted-space">          </span>startSession();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>break;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>case 'r':</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (menuDiv.style.display === 'block') {</p>
+<p class="p1"><span class="Apple-converted-space">          </span>resetSessions();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>break;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>case 'escape':</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (timerSection.style.display === 'block') {</p>
+<p class="p1"><span class="Apple-converted-space">          </span>exitApp();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>} else if (settingsSection.style.display === 'block') {</p>
+<p class="p1"><span class="Apple-converted-space">          </span>showMenu();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>break;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>case 'k':</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (timerSection.style.display === 'block') {</p>
+<p class="p1"><span class="Apple-converted-space">          </span>skipPhase();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>break;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>// On load, initialize UI with current state</p>
+<p class="p1"><span class="Apple-converted-space">  </span>updateSessionCount(timer.sessionsCompleted);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>onPhaseChange('idle');</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>// Log initial message</p>
+<p class="p1"><span class="Apple-converted-space">  </span>log('FocusForge Pomodoro ready. Press "Start Session" or "S" to begin.');</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;/script&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;/body&gt;</p>
+<p class="p1">&lt;/html&gt;</p>
+</body>
+</html>
