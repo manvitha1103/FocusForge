@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FocusForge</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>FocusForge</h1>
+    <div class="timer">
+      <h2 id="phase">Focus</h2>
+      <div id="time">25:00</div>
+    </div>
+    <div class="controls">
+      <button onclick="startTimer()">Start</button>
+      <button onclick="pauseTimer()">Pause</button>
+      <button onclick="resetTimer()">Reset</button>
+      <button onclick="skipTimer()">Skip</button>
+    </div>
+    <div class="session-counter">
+      Sessions Completed: <span id="sessionCount">0</span>
+    </div>
+    <div class="settings">
+      <h3>Settings</h3>
+      <label>Focus Minutes: <input type="number" id="focusInput" min="1" value="25" /></label>
+      <label>Short Break: <input type="number" id="shortBreakInput" min="1" value="5" /></label>
+      <label>Long Break: <input type="number" id="longBreakInput" min="1" value="15" /></label>
+      <label>Sessions Before Long Break: <input type="number" id="sessionsBeforeLongBreak" min="1" value="4" /></label>
+      <button onclick="saveSettings()">Save</button>
+    </div>
+    <div class="log">
+      <h3>Log</h3>
+      <ul id="logList"></ul>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
