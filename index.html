@@ -2,114 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>FocusForge Pomodoro</title>
-  <link rel="stylesheet" href="style.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-  <style>
-    * {
-      box-sizing: border-box;
-      font-family: 'Inter', sans-serif;
-      margin: 0;
-      padding: 0;
-    }
-    body {
-      background: linear-gradient(135deg, #f0f4ff, #e0ecff);
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 2rem;
-    }
-    .app-container {
-      background: white;
-      border-radius: 2rem;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-      padding: 2rem;
-      max-width: 500px;
-      width: 100%;
-    }
-    h1 {
-      text-align: center;
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
-      color: #333;
-    }
-    .timer {
-      text-align: center;
-      margin-bottom: 1.5rem;
-    }
-    #time {
-      font-size: 4rem;
-      font-weight: 600;
-      margin-bottom: 1rem;
-      color: #2c3e50;
-    }
-    .controls button {
-      background: #4a90e2;
-      color: white;
-      border: none;
-      padding: 0.6rem 1.2rem;
-      border-radius: 1rem;
-      font-size: 1rem;
-      margin: 0 0.3rem;
-      cursor: pointer;
-      transition: background 0.2s ease;
-    }
-    .controls button:hover {
-      background: #3b7cc4;
-    }
-    .session-info {
-      text-align: center;
-      margin-bottom: 1.5rem;
-      color: #555;
-    }
-    .settings {
-      background: #f9fbff;
-      border-radius: 1rem;
-      padding: 1rem;
-      margin-bottom: 1.5rem;
-    }
-    .settings h2 {
-      margin-bottom: 1rem;
-      font-size: 1.25rem;
-      color: #2c3e50;
-    }
-    .settings label {
-      display: block;
-      margin-bottom: 0.75rem;
-      color: #333;
-    }
-    .settings input {
-      margin-left: 0.5rem;
-      padding: 0.3rem;
-      width: 60px;
-      border-radius: 0.5rem;
-      border: 1px solid #ccc;
-    }
-    .settings button {
-      margin-top: 1rem;
-      background: #27ae60;
-      color: white;
-      border: none;
-      padding: 0.6rem 1.2rem;
-      border-radius: 1rem;
-      cursor: pointer;
-    }
-    .logs {
-      padding-top: 1rem;
-    }
-    .logs h2 {
-      margin-bottom: 0.75rem;
-      font-size: 1.25rem;
-      color: #2c3e50;
-    }
-    #logList {
-      list-style-type: disc;
-      padding-left: 1.5rem;
-      color: #444;
-    }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <div class="app-container">
@@ -128,10 +24,10 @@
     </div>
     <div class="settings">
       <h2>Settings</h2>
-      <label>Focus Duration (min): <input type="number" id="focusInput" value="25" min="5" max="60"></label>
-      <label>Short Break (min): <input type="number" id="shortBreakInput" value="5" min="1" max="15"></label>
-      <label>Long Break (min): <input type="number" id="longBreakInput" value="15" min="5" max="30"></label>
-      <label>Sessions Before Long Break: <input type="number" id="sessionGoalInput" value="4" min="1" max="10"></label>
+      <label>Focus Duration (min): <input type="number" id="focusInput" value="25" min="5" max="60" /></label>
+      <label>Short Break (min): <input type="number" id="shortBreakInput" value="5" min="1" max="15" /></label>
+      <label>Long Break (min): <input type="number" id="longBreakInput" value="15" min="5" max="30" /></label>
+      <label>Sessions Before Long Break: <input type="number" id="sessionGoalInput" value="4" min="1" max="10" /></label>
       <button id="saveSettings">Save Settings</button>
     </div>
     <div class="logs">
@@ -143,6 +39,3 @@
 </body>
 </html>
 
-  <script src="script.js"></script>
-</body>
-</html>
