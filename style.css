@@ -59,15 +59,20 @@ button {
   user-select: none;
 }
 
-button:hover {
+button:hover:not(:disabled) {
   background-color: #357abd;
+}
+
+button:disabled {
+  background-color: #a0aec0;
+  cursor: default;
 }
 
 #pause {
   background-color: #f59e0b;
 }
 
-#pause:hover {
+#pause:hover:not(:disabled) {
   background-color: #d97706;
 }
 
