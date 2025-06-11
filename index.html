@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>FocusForge Pomodoro</title>
+<link rel="stylesheet" href="style.css" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+</head>
+<body>
+<div id="app">
+  <h1>FocusForge</h1>
+  <div id="timer">25:00</div>
+  <div id="controls">
+    <button id="start">Start</button>
+    <button id="pause">Pause</button>
+    <button id="reset">Reset</button>
+    <button id="skip">Skip</button>
+  </div>
+  <div id="sessionCounter">Sessions Completed: 0</div>
+  <div id="settings">
+    <h2>Settings</h2>
+    <label>Focus Duration (min): <input type="number" id="focusInput" value="25" min="5" max="60" /></label>
+    <label>Short Break (min): <input type="number" id="shortBreakInput" value="5" min="1" max="15" /></label>
+    <label>Long Break (min): <input type="number" id="longBreakInput" value="15" min="5" max="30" /></label>
+    <label>Sessions Before Long Break: <input type="number" id="sessionGoalInput" value="4" min="1" max="10" /></label>
+    <button id="saveSettings">Save Settings</button>
+  </div>
+  <div id="logs">
+    <h2>Activity Logs</h2>
+    <ul id="logList"></ul>
+  </div>
+</div>
+<script src="script.js"></script>
+</body>
+</html>
