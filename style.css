@@ -1,0 +1,165 @@
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(135deg, #f0f4ff, #e0ecff);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+#app {
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 12px 24px rgba(0,0,0,0.12);
+  padding: 30px 40px;
+  max-width: 450px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+h1, h2 {
+  text-align: center;
+  margin: 0;
+  color: #2c3e50;
+  font-weight: 700;
+}
+
+#timer {
+  font-size: 4.5rem;
+  font-weight: 900;
+  text-align: center;
+  color: #1a202c;
+  letter-spacing: 2px;
+  user-select: none;
+}
+
+#controls {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+button {
+  flex: 1;
+  background-color: #4a90e2;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  user-select: none;
+}
+
+button:hover {
+  background-color: #357abd;
+}
+
+#pause {
+  background-color: #f59e0b;
+}
+
+#pause:hover {
+  background-color: #d97706;
+}
+
+#reset {
+  background-color: #ef4444;
+}
+
+#reset:hover {
+  background-color: #b91c1c;
+}
+
+#skip {
+  background-color: #10b981;
+}
+
+#skip:hover {
+  background-color: #047857;
+}
+
+#sessionCounter {
+  font-weight: 600;
+  text-align: center;
+  color: #3b4252;
+  user-select: none;
+}
+
+#settings {
+  background: #f9fbff;
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: inset 0 0 8px #d1d9e6;
+}
+
+#settings label {
+  font-weight: 600;
+  color: #374151;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1rem;
+}
+
+#settings input {
+  width: 70px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1.5px solid #cbd5e1;
+  font-size: 1rem;
+  text-align: center;
+  transition: border-color 0.3s ease;
+}
+
+#settings input:focus {
+  border-color: #4a90e2;
+  outline: none;
+}
+
+#saveSettings {
+  background-color: #2563eb;
+  padding: 12px 0;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-top: 10px;
+}
+
+#saveSettings:hover {
+  background-color: #1e40af;
+}
+
+#logs {
+  background: #eef2ff;
+  border-radius: 16px;
+  padding: 16px 20px;
+  max-height: 160px;
+  overflow-y: auto;
+  box-shadow: inset 0 0 8px #c7d2fe;
+}
+
+#logs h2 {
+  margin-bottom: 12px;
+  color: #2c3e50;
+}
+
+#logList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  color: #334155;
+  font-size: 0.9rem;
+  line-height: 1.3;
+}
