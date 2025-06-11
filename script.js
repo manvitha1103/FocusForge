@@ -1,159 +1,294 @@
-:root {
-  --color-bg-light: #f0f0f7;
-  --color-text-light: #222;
-  --color-primary-light: #3b82f6;
-  --color-error-light: #ef4444;
-  --color-muted-light: #666;
+document.addEventListener('DOMContentLoaded', () => {
+  const timerDisplay = document.getElementById('timer-display');
+  const statusDisplay = document.getElementById('status');
+  const sessionCountDisplay = document.getElementById('session-count');
+  const progressBar = document.getElementById('progress-bar');
 
-  --color-bg-dark: #121212;
-  --color-text-dark: #ddd;
-  --color-primary-dark: #60a5fa;
-  --color-error-dark: #f87171;
-  --color-muted-dark: #999;
-}
+  const startBtn = document.getElementById('start');
+  const pauseBtn = document.getElementById('pause');
+  const resetBtn = document.getElementById('reset');
+  const skipBtn = document.getElementById('skip');
+  const saveSettingsBtn = document.getElementById('saveSettings');
+  const workInput = document.getElementById('work-duration');
+  const restInput = document.getElementById('rest-duration');
+  const longBreakInput = document.getElementById('long-break-duration');
+  const sessionsBeforeLongInput = document.getElementById('sessions-before-long');
+  const modeToggle = document.getElementById('modeToggle');
+  const muteSoundBtn = document.getElementById('muteSound');
+  const volumeSlider = document.getElementById('sound-volume');
 
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: var(--color-bg-light);
-  color: var(--color-text-light);
-  text-align: center;
-  padding: 2rem;
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
+  let workDuration = 25 * 60;
+  let restDuration = 5 * 60;
+  let longBreakDuration = 15 * 60;
+  let sessionsBeforeLong = 4;
+  let timeLeft = workDuration;
+  let timer = null;
+  let isRunning = false;
+  let isWork = true;
+  let sessionCount = 0;
+  let muted = false;
+  let volume = 0.1;
 
-body.dark {
-  background: var(--color-bg-dark);
-  color: var(--color-text-dark);
-}
+  function beep() {
+    if (muted) return;
+    const ctx = new AudioContext();
+    const oscillator = ctx.createOscillator();
+    const gainNode = ctx.createGain();
+    oscillator.connect(gainNode);
+    gainNode.connect(ctx.destination);
+    oscillator.type = 'square';
+    oscillator.frequency.value = 880;
+    gainNode.gain.setValueAtTime(volume, ctx.currentTime);
+    oscillator.start();
+    oscillator.stop(ctx.currentTime + 0.15);
+    oscillator.onended = () => ctx.close();
+  }
 
-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-}
+  function format(s) {
+    const m = Math.floor(s / 60);
+    const sec = s % 60;
+    return `${m.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
+  }
 
-#modeToggle {
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
-  color: inherit;
-}
+  function updateTitle() {
+    document.title = (isWork ? 'Work' : 'Rest') + ' - ' + format(timeLeft);
+  }
 
-#timer-display {
-  font-size: 6rem;
-  font-weight: 900;
-  margin: 1rem 0;
-  user-select: none;
-}
+  function updateProgress() {
+    let total = isWork ? workDuration : restDuration;
+    if (!isWork && sessionCount % sessionsBeforeLong === 0 && sessionCount !== 0) {
+      total = longBreakDuration;
+    }
+    if (isWork && sessionCount !== 0 && sessionCount % sessionsBeforeLong === 0) {
+      total = longBreakDuration;
+    }
+    const elapsed = total - timeLeft;
+    const percent = (elapsed / total) * 100;
+    progressBar.style.width = percent + '%';
+  }
 
-#progress-container {
-  width: 80%;
-  height: 12px;
-  margin: 0 auto 1rem auto;
-  background-color: #ccc;
-  border-radius: 10px;
-  overflow: hidden;
-}
+  function updateDisplay() {
+    timerDisplay.textContent = format(timeLeft);
+    if (isWork) {
+      statusDisplay.textContent = 'Work session';
+      timerDisplay.style.color = document.body.classList.contains('dark') ? '#f87171' : '#ef4444';
+    } else {
+      statusDisplay.textContent = sessionCount % sessionsBeforeLong === 0 && sessionCount !== 0 ? 'Long break' : 'Rest session';
+      timerDisplay.style.color = document.body.classList.contains('dark') ? '#60a5fa' : '#3b82f6';
+    }
+    sessionCountDisplay.textContent = `Sessions completed: ${sessionCount}`;
+    updateTitle();
+    updateProgress();
+  }
 
-#progress-bar {
-  height: 100%;
-  width: 0;
-  background-color: var(--color-primary-light);
-  transition: width 1s linear;
-}
+  function enableDisableButtons() {
+    startBtn.disabled = isRunning;
+    pauseBtn.disabled = !isRunning;
+    workInput.disabled = isRunning;
+    restInput.disabled = isRunning;
+    longBreakInput.disabled = isRunning;
+    sessionsBeforeLongInput.disabled = isRunning;
+    saveSettingsBtn.disabled = isRunning;
+    volumeSlider.disabled = isRunning;
+    muteSoundBtn.disabled = isRunning;
+  }
 
-body.dark #progress-bar {
-  background-color: var(--color-primary-dark);
-}
+  function requestNotificationPermission() {
+    if ('Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission();
+    }
+  }
 
-#status {
-  font-size: 1.25rem;
-  margin-bottom: 0.3rem;
-  font-style: italic;
-  color: var(--color-muted-light);
-  user-select: none;
-}
+  function notifyUser(title, body) {
+    if ('Notification' in window && Notification.permission === 'granted') {
+      new Notification(title, { body, icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/OOjs_UI_icon_alarm.svg/1024px-OOjs_UI_icon_alarm.svg.png' });
+    }
+  }
 
-body.dark #status {
-  color: var(--color-muted-dark);
-}
+  function loadSettings() {
+    const w = localStorage.getItem('workDuration');
+    const r = localStorage.getItem('restDuration');
+    const l = localStorage.getItem('longBreakDuration');
+    const s = localStorage.getItem('sessionsBeforeLong');
+    const vol = localStorage.getItem('volume');
+    const mute = localStorage.getItem('muted');
+    const darkMode = localStorage.getItem('darkMode');
 
-#session-count {
-  margin-bottom: 1.5rem;
-  font-weight: 600;
-  font-size: 1.1rem;
-  user-select: none;
-}
+    if (w) {
+      workDuration = parseInt(w, 10);
+      workInput.value = Math.floor(workDuration / 60);
+    }
+    if (r) {
+      restDuration = parseInt(r, 10);
+      restInput.value = Math.floor(restDuration / 60);
+    }
+    if (l) {
+      longBreakDuration = parseInt(l, 10);
+      longBreakInput.value = Math.floor(longBreakDuration / 60);
+    }
+    if (s) {
+      sessionsBeforeLong = parseInt(s, 10);
+      sessionsBeforeLongInput.value = sessionsBeforeLong;
+    }
+    if (vol) {
+      volume = parseFloat(vol);
+      volumeSlider.value = volume;
+    }
+    if (mute) {
+      muted = mute === 'true';
+      muteSoundBtn.textContent = muted ? '🔈' : '🔊';
+    }
+    if (darkMode === 'true') {
+      document.body.classList.add('dark');
+      modeToggle.textContent = '☀️';
+    }
+  }
 
-.buttons button {
-  font-size: 1.2rem;
-  margin: 0.5rem;
-  padding: 0.6rem 1.8rem;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  background-color: var(--color-primary-light);
-  color: white;
-  transition: background-color 0.2s ease;
-}
+  function saveSettings() {
+    const w = parseInt(workInput.value, 10);
+    const r = parseInt(restInput.value, 10);
+    const l = parseInt(longBreakInput.value, 10);
+    const s = parseInt(sessionsBeforeLongInput.value, 10);
+    if (!Number.isInteger(w) || w <= 0 || !Number.isInteger(r) || r <= 0 || !Number.isInteger(l) || l <= 0 || !Number.isInteger(s) || s <= 0) {
+      alert('Please enter positive integer values for all durations and sessions before long break.');
+      return;
+    }
+    workDuration = w * 60;
+    restDuration = r * 60;
+    longBreakDuration = l * 60;
+    sessionsBeforeLong = s;
+    localStorage.setItem('workDuration', workDuration);
+    localStorage.setItem('restDuration', restDuration);
+    localStorage.setItem('longBreakDuration', longBreakDuration);
+    localStorage.setItem('sessionsBeforeLong', sessionsBeforeLong);
+    resetTimer();
+  }
 
-.buttons button:disabled {
-  background-color: #94a3b8;
-  cursor: not-allowed;
-}
+  function startTimer() {
+    if (isRunning) return;
+    isRunning = true;
+    enableDisableButtons();
 
-.buttons button:hover:not(:disabled) {
-  background-color: #2563eb;
-}
+    timer = setInterval(() => {
+      if (timeLeft > 0) {
+        timeLeft--;
+        updateDisplay();
+      } else {
+        beep();
+        sessionCount++;
+        notifyUser('Pomodoro Timer', isWork ? 'Work session completed! Time to rest.' : 'Break is over! Time to work.');
+        if (isWork) {
+          if (sessionCount % sessionsBeforeLong === 0) {
+            timeLeft = longBreakDuration;
+          } else {
+            timeLeft = restDuration;
+          }
+          isWork = false;
+        } else {
+          timeLeft = workDuration;
+          isWork = true;
+        }
+        updateDisplay();
+      }
+    }, 1000);
+  }
 
-.settings {
-  margin-top: 3rem;
-  font-size: 1.1rem;
-  max-width: 350px;
-  margin-left: auto;
-  margin-right: auto;
-  text-align: left;
-}
+  function pauseTimer() {
+    if (!isRunning) return;
+    clearInterval(timer);
+    isRunning = false;
+    enableDisableButtons();
+  }
 
-.settings label {
-  display: flex;
-  justify-content: space-between;
-  margin: 0.8rem 0;
-  align-items: center;
-}
+  function resetTimer() {
+    clearInterval(timer);
+    isRunning = false;
+    sessionCount = 0;
+    isWork = true;
+    timeLeft = workDuration;
+    enableDisableButtons();
+    updateDisplay();
+  }
 
-.settings input[type="number"],
-.settings input[type="range"] {
-  width: 80px;
-  font-size: 1rem;
-  padding: 0.2rem 0.4rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
+  function skipTimer() {
+    clearInterval(timer);
+    isRunning = false;
 
-body.dark .settings input[type="number"],
-body.dark .settings input[type="range"] {
-  background-color: #222;
-  color: #ddd;
-  border-color: #444;
-}
+    if (isWork) {
+      sessionCount++;
+      if (sessionCount % sessionsBeforeLong === 0) {
+        timeLeft = longBreakDuration;
+      } else {
+        timeLeft = restDuration;
+      }
+      isWork = false;
+    } else {
+      timeLeft = workDuration;
+      isWork = true;
+    }
+    enableDisableButtons();
+    updateDisplay();
+  }
 
-#muteSound {
-  background-color: #10b981;
-  color: white;
-  border: none;
-  font-weight: 700;
-  border-radius: 5px;
-  padding: 0.3rem 0.8rem;
-  margin-left: 1rem;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
+  function toggleDarkMode() {
+    document.body.classList.toggle('dark');
+    const isDark = document.body.classList.contains('dark');
+    localStorage.setItem('darkMode', isDark);
+    modeToggle.textContent = isDark ? '☀️' : '🌙';
+    updateDisplay();
+  }
 
-#muteSound:hover {
-  background-color: #059669;
-}
+  function toggleMute() {
+    muted = !muted;
+    localStorage.setItem('muted', muted);
+    muteSoundBtn.textContent = muted ? '🔈' : '🔊';
+  }
+
+  function updateVolume() {
+    volume = parseFloat(volumeSlider.value);
+    localStorage.setItem('volume', volume);
+  }
+
+  function handleKeydown(e) {
+    if (e.target.tagName === 'INPUT') return;
+    if (e.code === 'Space') {
+      e.preventDefault();
+      if (isRunning) pauseTimer();
+      else startTimer();
+    } else if (e.code === 'KeyS') {
+      e.preventDefault();
+      skipTimer();
+    } else if (e.code === 'KeyR') {
+      e.preventDefault();
+      resetTimer();
+    } else if (e.code === 'KeyD') {
+      e.preventDefault();
+      toggleDarkMode();
+    } else if (e.code === 'KeyM') {
+      e.preventDefault();
+      toggleMute();
+    }
+  }
+
+  function init() {
+    loadSettings();
+    timeLeft = workDuration;
+    updateDisplay();
+    enableDisableButtons();
+    requestNotificationPermission();
+  }
+
+  startBtn.addEventListener('click', startTimer);
+  pauseBtn.addEventListener('click', pauseTimer);
+  resetBtn.addEventListener('click', resetTimer);
+  skipBtn.addEventListener('click', skipTimer);
+  saveSettingsBtn.addEventListener('click', saveSettings);
+  modeToggle.addEventListener('click', toggleDarkMode);
+  muteSoundBtn.addEventListener('click', toggleMute);
+  volumeSlider.addEventListener('input', updateVolume);
+  document.addEventListener('keydown', handleKeydown);
+
+  init();
+});
 
 
