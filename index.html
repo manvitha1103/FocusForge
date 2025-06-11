@@ -1,40 +1,50 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" >
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>FocusForge Pomodoro</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
+  <title>Pomodoro Timer</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="app-container">
-    <h1>FocusForge</h1>
-    <div class="timer">
-      <div id="time">25:00</div>
-      <div class="controls">
-        <button id="start">Start</button>
-        <button id="pause">Pause</button>
-        <button id="reset">Reset</button>
-        <button id="skip">Skip</button>
-      </div>
+  <header>
+    <h1>Pomodoro Timer</h1>
+    <button id="modeToggle" aria-label="Toggle Dark/Light Mode">🌙</button>
+  </header>
+  <main>
+    <div id="timer-display">25:00</div>
+    <div id="progress-container">
+      <div id="progress-bar"></div>
     </div>
-    <div class="session-info">
-      <p>Session Count: <span id="sessionCount">0</span></p>
+    <div id="status">Work session</div>
+    <div id="session-count">Sessions completed: 0</div>
+    <div class="buttons">
+      <button id="start">Start</button>
+      <button id="pause" disabled>Pause</button>
+      <button id="skip">Skip</button>
+      <button id="reset">Reset</button>
     </div>
     <div class="settings">
       <h2>Settings</h2>
-      <label>Focus Duration (min): <input type="number" id="focusInput" value="25" min="5" max="60" /></label>
-      <label>Short Break (min): <input type="number" id="shortBreakInput" value="5" min="1" max="15" /></label>
-      <label>Long Break (min): <input type="number" id="longBreakInput" value="15" min="5" max="30" /></label>
-      <label>Sessions Before Long Break: <input type="number" id="sessionGoalInput" value="4" min="1" max="10" /></label>
+      <label>Work Duration (minutes):
+        <input type="number" id="work-duration" min="1" max="120" value="25" />
+      </label>
+      <label>Rest Duration (minutes):
+        <input type="number" id="rest-duration" min="1" max="60" value="5" />
+      </label>
+      <label>Long Break Duration (minutes):
+        <input type="number" id="long-break-duration" min="5" max="30" value="15" />
+      </label>
+      <label>Sessions Before Long Break:
+        <input type="number" id="sessions-before-long" min="1" max="10" value="4" />
+      </label>
+      <label>Sound Volume:
+        <input type="range" id="sound-volume" min="0" max="1" step="0.05" value="0.1" />
+      </label>
+      <button id="muteSound">🔊</button>
       <button id="saveSettings">Save Settings</button>
     </div>
-    <div class="logs">
-      <h2>Logs</h2>
-      <ul id="logList"></ul>
-    </div>
-  </div>
+  </main>
   <script src="script.js"></script>
 </body>
 </html>
