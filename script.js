@@ -1,22 +1,20 @@
-const timeDisplay = document.getElementById('timer');
-const startBtn = document.getElementById('start');
-const pauseBtn = document.getElementById('pause');
-const resetBtn = document.getElementById('reset');
-const skipBtn = document.getElementById('skip');
-const sessionCountElem = document.getElementById('sessionCounter');
-const logList = document.getElementById('logList');
+const timerDisplay = document.getElementById('timer');
+const startBtn = document.getElementById('startBtn');
+const pauseBtn = document.getElementById('pauseBtn');
+const resetBtn = document.getElementById('resetBtn');
+const skipBtn = document.getElementById('skipBtn');
 const focusInput = document.getElementById('focusInput');
 const shortBreakInput = document.getElementById('shortBreakInput');
 const longBreakInput = document.getElementById('longBreakInput');
-const sessionGoalInput = document.getElementById('sessionGoalInput');
-const saveSettingsBtn = document.getElementById('saveSettings');
+const sessionsBeforeLongBreakInput = document.getElementById('sessionsBeforeLongBreakInput');
+const saveSettingsBtn = document.getElementById('saveSettingsBtn');
+const sessionsCompletedDisplay = document.getElementById('sessionsCompleted');
 
-let timerId = null;
+let timer = null;
 let remainingSeconds = 0;
 let isRunning = false;
-let currentPhase = 'focus';
-let sessionCount = 0;
-let sessionsBeforeLongBreak = 4;
+let currentPhase = 'focus'; // 'focus', 'shortBreak', 'longBreak'
+let sessionsCompleted = 0;
 
 function secondsToMMSS(seconds) {
   const m = Math.floor(seconds / 60).toString().padStart(2, '0');
@@ -25,66 +23,11 @@ function secondsToMMSS(seconds) {
 }
 
 function updateTimerDisplay() {
-  timeDisplay.textContent = secondsToMMSS(remainingSeconds);
-}
-
-function log(msg) {
-  const li = document.createElement('li');
-  const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  li.textContent = `[${timeStr}] ${msg}`;
-  logList.prepend(li);
-  if (logList.children.length > 25) logList.removeChild(logList.lastChild);
-}
-
-function saveSettings() {
-  sessionsBeforeLongBreak = parseInt(sessionGoalInput.value, 10);
-  const settings = {
-    focusDuration: parseInt(focusInput.value, 10),
-    shortBreakDuration: parseInt(shortBreakInput.value, 10),
-    longBreakDuration: parseInt(longBreakInput.value, 10),
-    sessionsBeforeLongBreak: sessionsBeforeLongBreak,
-  };
-  localStorage.setItem('focusforge-settings', JSON.stringify(settings));
-  log('Settings saved');
-}
-
-function loadSettings() {
-  const settings = JSON.parse(localStorage.getItem('focusforge-settings'));
-  if (settings) {
-    focusInput.value = settings.focusDuration;
-    shortBreakInput.value = settings.shortBreakDuration;
-    longBreakInput.value = settings.longBreakDuration;
-    sessionGoalInput.value = settings.sessionsBeforeLongBreak;
-    sessionsBeforeLongBreak = settings.sessionsBeforeLongBreak;
-  } else {
-    sessionsBeforeLongBreak = parseInt(sessionGoalInput.value, 10);
-  }
-}
-
-function loadSessionCount() {
-  const savedDate = localStorage.getItem('focusforge-session-date');
-  const today = new Date().toDateString();
-  if (savedDate === today) {
-    sessionCount = parseInt(localStorage.getItem('focusforge-session-count'), 10) || 0;
-  } else {
-    sessionCount = 0;
-    localStorage.setItem('focusforge-session-date', today);
-    localStorage.setItem('focusforge-session-count', '0');
-  }
-  updateSessionCountUI();
-}
-
-function saveSessionCount() {
-  localStorage.setItem('focusforge-session-count', sessionCount.toString());
-  localStorage.setItem('focusforge-session-date', new Date().toDateString());
-}
-
-function updateSessionCountUI() {
-  sessionCountElem.textContent = `Sessions Completed: ${sessionCount}`;
+  timerDisplay.textContent = secondsToMMSS(remainingSeconds);
 }
 
 function setPhaseTime() {
-  switch(currentPhase) {
+  switch (currentPhase) {
     case 'focus':
       remainingSeconds = parseInt(focusInput.value, 10) * 60;
       break;
@@ -98,12 +41,15 @@ function setPhaseTime() {
   updateTimerDisplay();
 }
 
+function updateSessionsCompleted() {
+  sessionsCompletedDisplay.textContent = sessionsCompleted;
+}
+
 function handlePhaseComplete() {
   if (currentPhase === 'focus') {
-    sessionCount++;
-    saveSessionCount();
-    updateSessionCountUI();
-    if (sessionCount % sessionsBeforeLongBreak === 0) {
+    sessionsCompleted++;
+    updateSessionsCompleted();
+    if (sessionsCompleted % parseInt(sessionsBeforeLongBreakInput.value, 10) === 0) {
       currentPhase = 'longBreak';
     } else {
       currentPhase = 'shortBreak';
@@ -112,101 +58,76 @@ function handlePhaseComplete() {
     currentPhase = 'focus';
   }
   setPhaseTime();
-  log(`Phase switched to ${currentPhase}`);
-  playNotificationSound();
-  showNotification();
   startTimer();
+}
+
+function tick() {
+  if (remainingSeconds > 0) {
+    remainingSeconds--;
+    updateTimerDisplay();
+  } else {
+    clearInterval(timer);
+    isRunning = false;
+    handlePhaseComplete();
+  }
 }
 
 function startTimer() {
   if (isRunning) return;
-  if (remainingSeconds <= 0) setPhaseTime();
   isRunning = true;
-  startBtn.disabled = true;
-  pauseBtn.disabled = false;
-  timerId = setInterval(() => {
-    if (remainingSeconds > 0) {
-      remainingSeconds--;
-      updateTimerDisplay();
-    } else {
-      clearInterval(timerId);
-      isRunning = false;
-      startBtn.disabled = false;
-      pauseBtn.disabled = true;
-      handlePhaseComplete();
-    }
-  }, 1000);
-  log(`Timer started (${currentPhase})`);
+  timer = setInterval(tick, 1000);
 }
 
 function pauseTimer() {
   if (!isRunning) return;
-  clearInterval(timerId);
+  clearInterval(timer);
   isRunning = false;
-  startBtn.disabled = false;
-  pauseBtn.disabled = true;
-  log('Timer paused');
 }
 
 function resetTimer() {
-  clearInterval(timerId);
+  clearInterval(timer);
   isRunning = false;
   currentPhase = 'focus';
-  setPhaseTime();
-  startBtn.disabled = false;
-  pauseBtn.disabled = true;
-  log('Timer reset');
+  remainingSeconds = parseInt(focusInput.value, 10) * 60;
+  updateTimerDisplay();
+  sessionsCompleted = 0;
+  updateSessionsCompleted();
 }
 
 function skipTimer() {
-  clearInterval(timerId);
+  clearInterval(timer);
   isRunning = false;
-  startBtn.disabled = false;
-  pauseBtn.disabled = true;
-  log(`Skipped phase "${currentPhase}"`);
   handlePhaseComplete();
 }
 
-function playNotificationSound() {
-  try {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    const osc = ctx.createOscillator();
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(880, ctx.currentTime);
-    osc.connect(ctx.destination);
-    osc.start();
-    osc.stop(ctx.currentTime + 0.2);
-  } catch {
-    // AudioContext might be blocked on some browsers without user interaction
-  }
-}
-
-function showNotification() {
-  if (!("Notification" in window)) return;
-  if (Notification.permission === "granted") {
-    new Notification("FocusForge", { body: `Phase "${currentPhase}" started!` });
-  } else if (Notification.permission !== "denied") {
-    Notification.requestPermission().then(permission => {
-      if (permission === "granted") {
-        new Notification("FocusForge", { body: `Phase "${currentPhase}" started!` });
-      }
-    });
-  }
+function saveSettings() {
+  resetTimer();
 }
 
 startBtn.addEventListener('click', startTimer);
-pauseBtn.addEventListener('click', pauseTimer);
-resetBtn.addEventListener('click', resetTimer);
-skipBtn.addEventListener('click', skipTimer);
+pauseBtn.addEventListener('click', () => {
+  pauseTimer();
+  pauseBtn.disabled = true;
+  startBtn.disabled = false;
+});
+resetBtn.addEventListener('click', () => {
+  resetTimer();
+  pauseBtn.disabled = true;
+  startBtn.disabled = false;
+});
+skipBtn.addEventListener('click', () => {
+  skipTimer();
+  pauseBtn.disabled = true;
+  startBtn.disabled = false;
+});
 saveSettingsBtn.addEventListener('click', () => {
   saveSettings();
-  resetTimer();
+  pauseBtn.disabled = true;
+  startBtn.disabled = false;
 });
 
-window.addEventListener('load', () => {
-  loadSettings();
-  loadSessionCount();
-  resetTimer();
-  log('App initialized');
-});
+// Initialize
+resetTimer();
+pauseBtn.disabled = true;
+updateSessionsCompleted();
 
