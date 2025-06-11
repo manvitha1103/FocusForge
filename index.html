@@ -2,80 +2,21 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>FocusForge Pomodoro Timer</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FocusForge</title>
+  <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
-  <header>
+  <main class="app">
     <h1>FocusForge</h1>
-    <p>by Manvitha P. K. &amp; Hrehaan M.</p>
-  </header>
-
-  <main>
-    <section id="timer-section">
-      <div id="phase-label">Focus Session</div>
-      <div id="timer-display">25:00</div>
-      <div id="session-counter">Completed Sessions: 0</div>
-
-      <div id="controls">
-        <button id="start-btn">Start</button>
-        <button id="pause-btn" disabled>Pause</button>
-        <button id="resume-btn" disabled>Resume</button>
-        <button id="skip-btn" disabled>Skip</button>
-        <button id="reset-btn">Reset</button>
-      </div>
-    </section>
-
-    <section id="settings-section">
-      <h2>Settings</h2>
-      <form id="settings-form">
-        <label>
-          Focus Length (minutes):
-          <input type="number" id="focus-length" min="5" max="90" value="25" required />
-        </label>
-
-        <label>
-          Short Break Length (minutes):
-          <input type="number" id="short-break-length" min="1" max="30" value="5" required />
-        </label>
-
-        <label>
-          Long Break Length (minutes):
-          <input type="number" id="long-break-length" min="5" max="60" value="15" required />
-        </label>
-
-        <label>
-          Sessions before Long Break:
-          <input type="number" id="sessions-before-long-break" min="1" max="10" value="4" required />
-        </label>
-
-        <div id="settings-buttons">
-          <button type="submit" id="save-settings-btn">Save Changes</button>
-          <button type="button" id="reset-settings-btn">Reset Settings</button>
-        </div>
-      </form>
-    </section>
-
-    <section id="log-section">
-      <h2>Activity Log</h2>
-      <ul id="log-list"></ul>
-    </section>
-  </main>
-
-  <!-- Modal -->
-  <div id="modal" class="hidden">
-    <div id="modal-content">
-      <p id="modal-message"></p>
-      <div id="modal-buttons">
-        <button id="modal-confirm-btn">Confirm</button>
-        <button id="modal-cancel-btn">Cancel</button>
-      </div>
+    <div class="timer">
+      <span id="minutes">25</span>:<span id="seconds">00</span>
     </div>
-  </div>
+    <div class="controls">
+      <button id="start">Start</button>
+      <button id="pause">Pause</button>
+      <button id="reset">Reset</button>
+      <button id="skip">Skip</button>
+    </div>
+    <div class="session-info">
 
-  <audio id="alert-sound" src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg" preload="auto"></audio>
-
-  <script src="script.js"></script>
-</body>
-</html>
