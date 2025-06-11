@@ -14,12 +14,11 @@ const sessionGoalInput = document.getElementById('sessionGoalInput');
 const saveSettingsBtn = document.getElementById('saveSettings');
 
 let timer = null;
-let totalSeconds = 0;
 let remainingSeconds = 0;
 let isRunning = false;
 
-let currentPhase = 'focus'; 
-let sessionCount = 0;       /
+let currentPhase = 'focus';
+let sessionCount = 0;
 let sessionsBeforeLongBreak = 4;
 
 function loadSettings() {
@@ -44,17 +43,16 @@ function saveSettings() {
     sessionsBeforeLongBreak: sessionsBeforeLongBreak,
   };
   localStorage.setItem('focusforge-settings', JSON.stringify(settings));
-  log(`Settings saved.`);
+  log('Settings saved.');
 }
 
 function loadSessionCount() {
   const savedDate = localStorage.getItem('focusforge-session-date');
   const today = new Date().toDateString();
-
   if (savedDate === today) {
     sessionCount = parseInt(localStorage.getItem('focusforge-session-count')) || 0;
   } else {
-    sessionCount = 0; 
+    sessionCount = 0;
     localStorage.setItem('focusforge-session-date', today);
     localStorage.setItem('focusforge-session-count', '0');
   }
@@ -72,10 +70,9 @@ function updateSessionCountUI() {
 
 function log(message) {
   const li = document.createElement('li');
-  const timeStr = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+  const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   li.textContent = `[${timeStr}] ${message}`;
   logList.prepend(li);
-
   if (logList.children.length > 20) {
     logList.removeChild(logList.lastChild);
   }
@@ -92,11 +89,10 @@ function updateTimerDisplay() {
 }
 
 function startTimer() {
-  if (isRunning) return; 
+  if (isRunning) return;
   if (remainingSeconds === 0) {
     switchPhase();
   }
-
   isRunning = true;
   timer = setInterval(() => {
     if (remainingSeconds > 0) {
@@ -108,7 +104,6 @@ function startTimer() {
       onPhaseComplete();
     }
   }, 1000);
-
   log(`Started ${currentPhase} session.`);
 }
 
@@ -116,16 +111,16 @@ function pauseTimer() {
   if (!isRunning) return;
   clearInterval(timer);
   isRunning = false;
-  log(`Paused timer.`);
+  log('Paused timer.');
 }
 
 function resetTimer() {
   clearInterval(timer);
   isRunning = false;
-  remainingSeconds = 0;
   currentPhase = 'focus';
+  remainingSeconds = parseInt(focusInput.value) * 60;
   updateTimerDisplay();
-  log(`Timer reset.`);
+  log('Timer reset.');
 }
 
 function skipTimer() {
@@ -133,7 +128,7 @@ function skipTimer() {
     clearInterval(timer);
     isRunning = false;
   }
-  log(`Skipped current phase.`);
+  log('Skipped current phase.');
   switchPhase();
   startTimer();
 }
@@ -143,7 +138,6 @@ function switchPhase() {
     sessionCount++;
     saveSessionCount();
     updateSessionCountUI();
-
     if (sessionCount % sessionsBeforeLongBreak === 0) {
       currentPhase = 'longBreak';
       remainingSeconds = parseInt(longBreakInput.value) * 60;
@@ -160,6 +154,11 @@ function switchPhase() {
   playSound();
 }
 
+function onPhaseComplete() {
+  switchPhase();
+  startTimer();
+}
+
 function playSound() {
   const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   const oscillator = audioCtx.createOscillator();
@@ -171,18 +170,18 @@ function playSound() {
 }
 
 document.addEventListener('keydown', (e) => {
-  if (e.target.tagName === 'INPUT') return; 
-  switch(e.key.toLowerCase()) {
-    case 's': 
+  if (e.target.tagName === 'INPUT') return;
+  switch (e.key.toLowerCase()) {
+    case 's':
       startTimer();
       break;
     case 'p':
       pauseTimer();
       break;
-    case 'r': 
+    case 'r':
       resetTimer();
       break;
-    case 'k': 
+    case 'k':
       skipTimer();
       break;
   }
@@ -200,11 +199,10 @@ saveSettingsBtn.addEventListener('click', () => {
 function init() {
   loadSettings();
   loadSessionCount();
-
   remainingSeconds = parseInt(focusInput.value) * 60;
   updateTimerDisplay();
-
   log('App initialized.');
 }
 
 init();
+
