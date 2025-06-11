@@ -1,228 +1,159 @@
-document.addEventListener('DOMContentLoaded', () => {
-  const timeDisplay = document.getElementById('time');
-  const startBtn = document.getElementById('start');
-  const pauseBtn = document.getElementById('pause');
-  const resetBtn = document.getElementById('reset');
-  const skipBtn = document.getElementById('skip');
+:root {
+  --color-bg-light: #f0f0f7;
+  --color-text-light: #222;
+  --color-primary-light: #3b82f6;
+  --color-error-light: #ef4444;
+  --color-muted-light: #666;
 
-  const sessionCountElem = document.getElementById('sessionCount');
-  const logList = document.getElementById('logList');
+  --color-bg-dark: #121212;
+  --color-text-dark: #ddd;
+  --color-primary-dark: #60a5fa;
+  --color-error-dark: #f87171;
+  --color-muted-dark: #999;
+}
 
-  const focusInput = document.getElementById('focusInput');
-  const shortBreakInput = document.getElementById('shortBreakInput');
-  const longBreakInput = document.getElementById('longBreakInput');
-  const sessionGoalInput = document.getElementById('sessionGoalInput');
-  const saveSettingsBtn = document.getElementById('saveSettings');
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: var(--color-bg-light);
+  color: var(--color-text-light);
+  text-align: center;
+  padding: 2rem;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
 
-  let timer = null;
-  let remainingSeconds = 0;
-  let isRunning = false;
+body.dark {
+  background: var(--color-bg-dark);
+  color: var(--color-text-dark);
+}
 
-  let currentPhase = 'focus';
-  let sessionCount = 0;
-  let sessionsBeforeLongBreak = 4;
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
 
-  function loadSettings() {
-    const settings = JSON.parse(localStorage.getItem('focusforge-settings'));
-    if (settings) {
-      focusInput.value = settings.focusDuration;
-      shortBreakInput.value = settings.shortBreakDuration;
-      longBreakInput.value = settings.longBreakDuration;
-      sessionGoalInput.value = settings.sessionsBeforeLongBreak;
-      sessionsBeforeLongBreak = settings.sessionsBeforeLongBreak;
-    } else {
-      sessionsBeforeLongBreak = parseInt(sessionGoalInput.value);
-    }
-  }
+#modeToggle {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: inherit;
+}
 
-  function saveSettings() {
-    sessionsBeforeLongBreak = parseInt(sessionGoalInput.value);
-    const settings = {
-      focusDuration: parseInt(focusInput.value),
-      shortBreakDuration: parseInt(shortBreakInput.value),
-      longBreakDuration: parseInt(longBreakInput.value),
-      sessionsBeforeLongBreak: sessionsBeforeLongBreak,
-    };
-    localStorage.setItem('focusforge-settings', JSON.stringify(settings));
-    log('Settings saved.');
-  }
+#timer-display {
+  font-size: 6rem;
+  font-weight: 900;
+  margin: 1rem 0;
+  user-select: none;
+}
 
-  function loadSessionCount() {
-    const savedDate = localStorage.getItem('focusforge-session-date');
-    const today = new Date().toDateString();
-    if (savedDate === today) {
-      sessionCount = parseInt(localStorage.getItem('focusforge-session-count')) || 0;
-    } else {
-      sessionCount = 0;
-      localStorage.setItem('focusforge-session-date', today);
-      localStorage.setItem('focusforge-session-count', '0');
-    }
-    updateSessionCountUI();
-  }
+#progress-container {
+  width: 80%;
+  height: 12px;
+  margin: 0 auto 1rem auto;
+  background-color: #ccc;
+  border-radius: 10px;
+  overflow: hidden;
+}
 
-  function saveSessionCount() {
-    localStorage.setItem('focusforge-session-count', sessionCount.toString());
-    localStorage.setItem('focusforge-session-date', new Date().toDateString());
-  }
+#progress-bar {
+  height: 100%;
+  width: 0;
+  background-color: var(--color-primary-light);
+  transition: width 1s linear;
+}
 
-  function updateSessionCountUI() {
-    sessionCountElem.textContent = sessionCount;
-  }
+body.dark #progress-bar {
+  background-color: var(--color-primary-dark);
+}
 
-  function log(message) {
-    const li = document.createElement('li');
-    const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    li.textContent = `[${timeStr}] ${message}`;
-    logList.prepend(li);
-    if (logList.children.length > 20) {
-      logList.removeChild(logList.lastChild);
-    }
-  }
+#status {
+  font-size: 1.25rem;
+  margin-bottom: 0.3rem;
+  font-style: italic;
+  color: var(--color-muted-light);
+  user-select: none;
+}
 
-  function secondsToMMSS(seconds) {
-    const m = Math.floor(seconds / 60).toString().padStart(2, '0');
-    const s = (seconds % 60).toString().padStart(2, '0');
-    return `${m}:${s}`;
-  }
+body.dark #status {
+  color: var(--color-muted-dark);
+}
 
-  function updateTimerDisplay() {
-    timeDisplay.textContent = secondsToMMSS(remainingSeconds);
-  }
+#session-count {
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+  font-size: 1.1rem;
+  user-select: none;
+}
 
-  function startTimer() {
-    if (isRunning) return;
-    if (remainingSeconds === 0) {
-      switchPhase();
-    }
-    isRunning = true;
-    timer = setInterval(() => {
-      if (remainingSeconds > 0) {
-        remainingSeconds--;
-        updateTimerDisplay();
-      } else {
-        clearInterval(timer);
-        isRunning = false;
-        onPhaseComplete();
-      }
-    }, 1000);
-    log(`Started ${currentPhase} session.`);
-  }
+.buttons button {
+  font-size: 1.2rem;
+  margin: 0.5rem;
+  padding: 0.6rem 1.8rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: var(--color-primary-light);
+  color: white;
+  transition: background-color 0.2s ease;
+}
 
-  function pauseTimer() {
-    if (!isRunning) return;
-    clearInterval(timer);
-    isRunning = false;
-    log('Paused timer.');
-  }
+.buttons button:disabled {
+  background-color: #94a3b8;
+  cursor: not-allowed;
+}
 
-  function resetTimer() {
-    clearInterval(timer);
-    isRunning = false;
-    currentPhase = 'focus';
-    remainingSeconds = parseInt(focusInput.value) * 60;
-    updateTimerDisplay();
-    log('Timer reset.');
-  }
+.buttons button:hover:not(:disabled) {
+  background-color: #2563eb;
+}
 
-  function skipTimer() {
-    if (isRunning) {
-      clearInterval(timer);
-      isRunning = false;
-    }
-    log('Skipped current phase.');
-    switchPhase();
-    startTimer();
-  }
+.settings {
+  margin-top: 3rem;
+  font-size: 1.1rem;
+  max-width: 350px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: left;
+}
 
-  function switchPhase() {
-    if (currentPhase === 'focus') {
-      sessionCount++;
-      saveSessionCount();
-      updateSessionCountUI();
-      if (sessionCount % sessionsBeforeLongBreak === 0) {
-        currentPhase = 'longBreak';
-        remainingSeconds = parseInt(longBreakInput.value) * 60;
-      } else {
-        currentPhase = 'shortBreak';
-        remainingSeconds = parseInt(shortBreakInput.value) * 60;
-      }
-    } else {
-      currentPhase = 'focus';
-      remainingSeconds = parseInt(focusInput.value) * 60;
-    }
-    updateTimerDisplay();
-    log(`Switched to ${currentPhase} phase.`);
-    playSound();
-  }
+.settings label {
+  display: flex;
+  justify-content: space-between;
+  margin: 0.8rem 0;
+  align-items: center;
+}
 
-  function onPhaseComplete() {
-    switchPhase();
-    startTimer();
-  }
+.settings input[type="number"],
+.settings input[type="range"] {
+  width: 80px;
+  font-size: 1rem;
+  padding: 0.2rem 0.4rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
 
-  function playSound() {
-    try {
-      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      const oscillator = audioCtx.createOscillator();
-      oscillator.type = 'sine';
-      oscillator.frequency.setValueAtTime(1000, audioCtx.currentTime);
-      oscillator.connect(audioCtx.destination);
-      oscillator.start();
-      oscillator.stop(audioCtx.currentTime + 0.2);
-    } catch (e) {
-      // AudioContext may fail if not user triggered — ignore safely
-    }
-  }
+body.dark .settings input[type="number"],
+body.dark .settings input[type="range"] {
+  background-color: #222;
+  color: #ddd;
+  border-color: #444;
+}
 
-  document.addEventListener('keydown', (e) => {
-    if (e.target.tagName === 'INPUT') return;
-    switch (e.key.toLowerCase()) {
-      case 's':
-        startTimer();
-        break;
-      case 'p':
-        pauseTimer();
-        break;
-      case 'r':
-        resetTimer();
-        break;
-      case 'k':
-        skipTimer();
-        break;
-    }
-  });
+#muteSound {
+  background-color: #10b981;
+  color: white;
+  border: none;
+  font-weight: 700;
+  border-radius: 5px;
+  padding: 0.3rem 0.8rem;
+  margin-left: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
 
-  startBtn.addEventListener('click', () => {
-    console.log('Start button clicked');
-    startTimer();
-  });
-  pauseBtn.addEventListener('click', () => {
-    console.log('Pause button clicked');
-    pauseTimer();
-  });
-  resetBtn.addEventListener('click', () => {
-    console.log('Reset button clicked');
-    resetTimer();
-  });
-  skipBtn.addEventListener('click', () => {
-    console.log('Skip button clicked');
-    skipTimer();
-  });
-  saveSettingsBtn.addEventListener('click', () => {
-    console.log('Save Settings clicked');
-    saveSettings();
-    resetTimer();
-  });
-
-  function init() {
-    loadSettings();
-    loadSessionCount();
-    remainingSeconds = parseInt(focusInput.value) * 60;
-    updateTimerDisplay();
-    log('App initialized.');
-  }
-
-  init();
-});
+#muteSound:hover {
+  background-color: #059669;
+}
 
 
