@@ -3,38 +3,146 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FocusForge</title>
+  <title>FocusForge Pomodoro</title>
   <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background: linear-gradient(135deg, #f0f4ff, #e0ecff);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+    }
+    .app-container {
+      background: white;
+      border-radius: 2rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      padding: 2rem;
+      max-width: 500px;
+      width: 100%;
+    }
+    h1 {
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      color: #333;
+    }
+    .timer {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    #time {
+      font-size: 4rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: #2c3e50;
+    }
+    .controls button {
+      background: #4a90e2;
+      color: white;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 1rem;
+      font-size: 1rem;
+      margin: 0 0.3rem;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    .controls button:hover {
+      background: #3b7cc4;
+    }
+    .session-info {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: #555;
+    }
+    .settings {
+      background: #f9fbff;
+      border-radius: 1rem;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .settings h2 {
+      margin-bottom: 1rem;
+      font-size: 1.25rem;
+      color: #2c3e50;
+    }
+    .settings label {
+      display: block;
+      margin-bottom: 0.75rem;
+      color: #333;
+    }
+    .settings input {
+      margin-left: 0.5rem;
+      padding: 0.3rem;
+      width: 60px;
+      border-radius: 0.5rem;
+      border: 1px solid #ccc;
+    }
+    .settings button {
+      margin-top: 1rem;
+      background: #27ae60;
+      color: white;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 1rem;
+      cursor: pointer;
+    }
+    .logs {
+      padding-top: 1rem;
+    }
+    .logs h2 {
+      margin-bottom: 0.75rem;
+      font-size: 1.25rem;
+      color: #2c3e50;
+    }
+    #logList {
+      list-style-type: disc;
+      padding-left: 1.5rem;
+      color: #444;
+    }
+  </style>
 </head>
 <body>
-  <div class="container">
+  <div class="app-container">
     <h1>FocusForge</h1>
     <div class="timer">
-      <h2 id="phase">Focus</h2>
       <div id="time">25:00</div>
+      <div class="controls">
+        <button id="start">Start</button>
+        <button id="pause">Pause</button>
+        <button id="reset">Reset</button>
+        <button id="skip">Skip</button>
+      </div>
     </div>
-    <div class="controls">
-      <button onclick="startTimer()">Start</button>
-      <button onclick="pauseTimer()">Pause</button>
-      <button onclick="resetTimer()">Reset</button>
-      <button onclick="skipTimer()">Skip</button>
-    </div>
-    <div class="session-counter">
-      Sessions Completed: <span id="sessionCount">0</span>
+    <div class="session-info">
+      <p>Session Count: <span id="sessionCount">0</span></p>
     </div>
     <div class="settings">
-      <h3>Settings</h3>
-      <label>Focus Minutes: <input type="number" id="focusInput" min="1" value="25" /></label>
-      <label>Short Break: <input type="number" id="shortBreakInput" min="1" value="5" /></label>
-      <label>Long Break: <input type="number" id="longBreakInput" min="1" value="15" /></label>
-      <label>Sessions Before Long Break: <input type="number" id="sessionsBeforeLongBreak" min="1" value="4" /></label>
-      <button onclick="saveSettings()">Save</button>
+      <h2>Settings</h2>
+      <label>Focus Duration (min): <input type="number" id="focusInput" value="25" min="5" max="60"></label>
+      <label>Short Break (min): <input type="number" id="shortBreakInput" value="5" min="1" max="15"></label>
+      <label>Long Break (min): <input type="number" id="longBreakInput" value="15" min="5" max="30"></label>
+      <label>Sessions Before Long Break: <input type="number" id="sessionGoalInput" value="4" min="1" max="10"></label>
+      <button id="saveSettings">Save Settings</button>
     </div>
-    <div class="log">
-      <h3>Log</h3>
+    <div class="logs">
+      <h2>Logs</h2>
       <ul id="logList"></ul>
     </div>
   </div>
+  <script src="script.js"></script>
+</body>
+</html>
+
   <script src="script.js"></script>
 </body>
 </html>
