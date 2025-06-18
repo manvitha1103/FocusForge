@@ -13,10 +13,10 @@ const timeDisplay = document.getElementById("time");
 const phaseLabel = document.getElementById("phase-label");
 const sessionCountDisplay = document.getElementById("sessionCount");
 
-const startBtn = document.getElementById("start");
-const pauseBtn = document.getElementById("pause");
-const resetBtn = document.getElementById("reset");
-const skipBtn = document.getElementById("skip");
+const start = document.getElementById("start");
+const pause = document.getElementById("pause");
+const reset = document.getElementById("reset");
+const skip = document.getElementById("skip");
 
 const focusInput = document.getElementById("focusInput");
 const shortBreakInput = document.getElementById("shortBreakInput");
@@ -70,16 +70,16 @@ function startTimer() {
   if (!isRunning) {
     timer = setInterval(tick, 1000);
     isRunning = true;
-    startBtn.disabled = true;
-    pauseBtn.disabled = false;
+    start.disabled = true;
+    pause.disabled = false;
   }
 }
 
 function pauseTimer() {
   clearInterval(timer);
   isRunning = false;
-  startBtn.disabled = false;
-  pauseBtn.disabled = true;
+  start.disabled = false;
+  pause.disabled = true;
 }
 
 function resetTimer() {
@@ -88,15 +88,15 @@ function resetTimer() {
                   currentPhase === 'shortBreak' ? shortBreak * 60 :
                   longBreak * 60;
   updateDisplay();
-  startBtn.disabled = false;
-  pauseBtn.disabled = true;
+  start.disabled = false;
+  pause.disabled = true;
 }
 
 function skipPhase() {
   if (isRunning) pauseTimer();
   switchPhase();
   updateDisplay();
-  startBtn.disabled = false;
+  start.disabled = false;
 }
 
 function loadSettings() {
@@ -130,11 +130,11 @@ function saveSettings() {
   resetTimer();
 }
 
-startBtn.addEventListener('click', startTimer);
-pauseBtn.addEventListener('click', pauseTimer);
-resetBtn.addEventListener('click', () => modal.classList.remove('hidden'));
-skipBtn.addEventListener('click', skipPhase);
-saveSettingsBtn.addEventListener('click', saveSettings);
+start.addEventListener('click', startTimer);
+pause.addEventListener('click', pauseTimer);
+reset.addEventListener('click', () => modal.classList.remove('hidden'));
+skip.addEventListener('click', skipPhase);
+saveSettings.addEventListener('click', saveSettings);
 
 modalYes.addEventListener('click', () => {
   modal.classList.add('hidden');
