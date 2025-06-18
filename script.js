@@ -155,3 +155,4 @@ document.addEventListener('keydown', e => {
 loadSettings();
 remainingTime = focusDuration * 60;
 updateDisplay();
+
