@@ -40,13 +40,8 @@ function switchPhase() {
     completedFocusSessions++;
     sessionCount++;
     sessionCountDisplay.textContent = sessionCount;
-    if (completedFocusSessions % sessionsBeforeLong === 0) {
-      currentPhase = 'longBreak';
-      remainingTime = longBreak * 60;
-    } else {
-      currentPhase = 'shortBreak';
-      remainingTime = shortBreak * 60;
-    }
+    currentPhase = (completedFocusSessions % sessionsBeforeLong === 0) ? 'longBreak' : 'shortBreak';
+    remainingTime = (currentPhase === 'longBreak' ? longBreak : shortBreak) * 60;
   } else {
     currentPhase = 'focus';
     remainingTime = focusDuration * 60;
@@ -84,9 +79,7 @@ function pauseTimer() {
 
 function resetTimer() {
   if (isRunning) pauseTimer();
-  remainingTime = currentPhase === 'focus' ? focusDuration * 60 :
-                  currentPhase === 'shortBreak' ? shortBreak * 60 :
-                  longBreak * 60;
+  remainingTime = (currentPhase === 'focus' ? focusDuration : currentPhase === 'shortBreak' ? shortBreak : longBreak) * 60;
   updateDisplay();
   start.disabled = false;
   pause.disabled = true;
@@ -134,7 +127,7 @@ start.addEventListener('click', startTimer);
 pause.addEventListener('click', pauseTimer);
 reset.addEventListener('click', () => modal.classList.remove('hidden'));
 skip.addEventListener('click', skipPhase);
-saveSettings.addEventListener('click', saveSettings);
+saveSettingsBtn.addEventListener('click', saveSettings);
 
 modalYes.addEventListener('click', () => {
   modal.classList.add('hidden');
@@ -144,6 +137,7 @@ modalNo.addEventListener('click', () => modal.classList.add('hidden'));
 
 document.addEventListener('keydown', e => {
   if (e.code === 'Space') {
+    e.preventDefault();
     isRunning ? pauseTimer() : startTimer();
   } else if (e.code === 'KeyR') {
     resetTimer();
@@ -155,4 +149,3 @@ document.addEventListener('keydown', e => {
 loadSettings();
 remainingTime = focusDuration * 60;
 updateDisplay();
-
