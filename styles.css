@@ -39,10 +39,10 @@ body {
   cursor: pointer;
 }
 
-button#start { background-color: #28a745; color: white; }
-button#pause { background-color: #ffc107; color: black; }
-button#reset { background-color: #dc3545; color: white; }
-button#skip { background-color: #007bff; color: white; }
+button#startBtn { background-color: #28a745; color: white; }
+button#pauseBtn { background-color: #ffc107; color: black; }
+button#resetBtn { background-color: #dc3545; color: white; }
+button#skipBtn { background-color: #007bff; color: white; }
 
 .settings {
   margin-top: 2rem;
